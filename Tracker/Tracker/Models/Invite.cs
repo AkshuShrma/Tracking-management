@@ -22,7 +22,7 @@ namespace Tracker.Models
         public enum Action
         {
             Enable = 1,
-            Disable= 2,
+            Disable = 2,
             Delete = 3
         };
     }

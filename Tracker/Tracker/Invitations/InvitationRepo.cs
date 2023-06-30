@@ -23,7 +23,7 @@ namespace Tracker.Invitations
             _email = email;
         }
 
-        public bool CreateInvitation(string senderId, string reciverId)
+        public bool CreateInvitation(string senderId, string reciverId) 
         {
 
             var validatasender = _userManager.FindByIdAsync(senderId).Result;
@@ -37,12 +37,16 @@ namespace Tracker.Invitations
                 SenderId = validatasender.Id,
                 UserStatus = Invite.Status.Pending,
                 UserActions = Invite.Action.Enable
+                
             };
             _context.Invites.Add(invitation);
             var mailrequest = new EmailDto()
             {
                 To = "akshay-sharma@cssoftsolutions.com", //validateReceiver.Email,
-                Subject = "Invitation for join in the table and edit the details of the table"
+                Subject = "Invitation for join in the table and edit the details of the table",
+                receiverUserName = validateReceiver.UserName,
+                senderUserName = validatasender.UserName,
+                ReciverId = validateReceiver.Id
             };
             _email.SendEmail(mailrequest);
             return _context.SaveChanges() == 1 ? true : false;
@@ -76,27 +80,49 @@ namespace Tracker.Invitations
 
         public ICollection<FindUser> GetSpecificInvitations(string username,string senderId)
         {
-            //var dbusers = _userManager.Users;
-            //return dbusers.Where(u => u.UserName.Contains(username)).ToList();
+            //var user = User.Identity.GetApplicationUser();
             var data = _userManager.FindByIdAsync(senderId).Result;
             var dbusers = _userManager.Users;
             return dbusers.Where(u => u.UserName.Contains(username)).Select(m => new FindUser() { Id = m.Id, Name = m.UserName }).Where(u => u.Id != data.Id).ToList();
         }
 
-        public bool UpdateAction(string senderId, string reciverId, int action)
+        public ICollection<Invite> InvitationComesFromUser(string userId)
+        {
+            return _context.Set<Invite>().Include(u => u.User1)
+              .Where(u => u.ReciverId == userId && u.UserStatus == Invite.Status.Approved)
+              .Select(u => new Invite()
+              {
+                  SenderId = u.SenderId,
+                  User1 = new ApplicationUser()
+                  {
+                      Id = u.User1.Id,
+                      UserName = u.User1.UserName
+                  },
+                  UserActions = u.UserActions,
+                  UserStatus = u.UserStatus
+              }
+              )
+              .ToList();
+        }
+
+        public bool UpdateAction(string reciverId, string senderId, int action)
         {
             var sender = _userManager.FindByIdAsync(senderId).Result;
             var reciver = _userManager.FindByIdAsync(reciverId).Result;
             if (reciver == null || sender == null) return false;
             var findInvitation = _context.Invites.FirstOrDefault(m => m.SenderId == senderId && m.ReciverId == reciverId);
             if (findInvitation == null) return false;
-                findInvitation.UserActions = Invite.Action.Enable;
-
+                findInvitation.UserActions = (Invite.Action)action;
+            if (findInvitation.UserActions == Invite.Action.Delete)
+            {
+                _context.Invites.Remove(findInvitation);
+                return _context.SaveChanges() == 1 ? true : false;
+            }
             _context.Update(findInvitation);
             return _context.SaveChanges() == 1 ? true : false;
         }
 
-        public bool UpdateStatus(string senderId, string reciverId, int status)
+        public bool UpdateStatus(string reciverId, string senderId, int status)
         {
             var sender = _userManager.FindByIdAsync(senderId).Result;
             var reciver = _userManager.FindByIdAsync(reciverId).Result;

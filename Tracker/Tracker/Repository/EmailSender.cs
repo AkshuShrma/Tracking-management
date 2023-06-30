@@ -18,12 +18,24 @@ namespace Tracker.Repository
         public void SendEmail(EmailDto request)
         {
             var email = new MimeMessage();
+
             email.From.Add(MailboxAddress.Parse(_config.GetSection("EmailUsername").Value));
             email.To.Add(MailboxAddress.Parse(request.To));
             email.Subject = request.Subject;
             var template = Directory.GetCurrentDirectory() + "\\Template\\Email.html";
-            using StreamReader stream= new StreamReader(template);
-            email.Body = new TextPart(TextFormat.Html) { Text =  stream.ReadToEnd()};
+            using (StreamReader stream = new StreamReader(template))
+            {
+                var mailText = stream.ReadToEnd();
+                mailText = mailText.Replace("[senderUserName]", request.senderUserName)
+                    .Replace("[receiverUserName]", request.receiverUserName)
+                    .Replace("[date]", DateTime.UtcNow.ToString())
+                    .Replace("[time]", DateTime.Now.ToShortTimeString())
+                    .Replace("[reciverId]", request.ReciverId);
+
+                email.Body = new TextPart(TextFormat.Html) { Text = mailText };
+            }
+            //using StreamReader stream= new StreamReader(template);
+            //email.Body = new TextPart(TextFormat.Html) { Text =  stream.ReadToEnd()};
 
             using var smtp = new SmtpClient();
             smtp.Connect(_config.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);

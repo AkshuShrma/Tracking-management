@@ -1,0 +1,29 @@
+<!-- <div class="w-25 m-auto mt-5">
+  <table class="table table-striped table-hover text-center">
+    <thead class="bg-primary text-white">
+      <tr>
+        <td>Name</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let invite of invitations">
+        <td>{{ invite.user1.userName }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div> -->
+
+<div class="row">
+  <h2 class="text-center text-info">Invited person List</h2>
+</div>
+<div>
+  <div class="row w-50 m-auto" style="overflow-x: scroll">
+    <button
+      class="col-2 btn btn-info h-20"
+      (click)="showTableClick(invitation.senderId)"
+      *ngFor="let invitation of invitations"
+    >
+      {{ invitation.user1.userName }}
+    </button>
+  </div>
+</div>

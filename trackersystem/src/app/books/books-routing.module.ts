@@ -4,8 +4,18 @@ import { HomeComponent } from '../components/home/home.component';
 import { AddbooksComponent } from '../components/addbooks/addbooks.component';
 import { EditbooksComponent } from '../components/editbooks/editbooks.component';
 import { InvitationComponent } from '../components/invitation/invitation.component';
+import { ConfirmationComponent } from '../components/confirmation/confirmation.component';
+import { InvitationersComponent } from '../components/invitationers/invitationers.component';
 
 const routes: Routes = [
+  {
+    path:'invitationers',
+    component:InvitationersComponent
+  },
+  {
+    path:'confirmation/:reciverId/:status',
+    component:ConfirmationComponent,
+  },
   {
     path: 'invitation',
     component: InvitationComponent,

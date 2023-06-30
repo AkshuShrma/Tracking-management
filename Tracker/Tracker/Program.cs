@@ -41,19 +41,19 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "bearer"
     });
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
             {
+                Reference = new OpenApiReference
                 {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type=ReferenceType.SecurityScheme,
-                            Id="Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
+                   Type=ReferenceType.SecurityScheme,
+                   Id="Bearer"
                 }
-            });
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 builder.Services.AddAuthorization();

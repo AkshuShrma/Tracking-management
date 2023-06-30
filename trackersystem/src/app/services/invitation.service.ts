@@ -25,11 +25,23 @@ export class InvitationService {
     );
   }
 
-  status(): Observable<any> {
-    return this.http.get<any>('');
+  status(reciverId: any, status: any): Observable<any> {
+    return this.http.get<any>(
+      `https://localhost:7195/minimalAPI/status/${reciverId}/${status}`
+    );
   }
 
-  action(): Observable<any> {
-    return this.http.get<any>('');
+  action(reciverId: any, action: any): Observable<any> {
+    debugger
+    return this.http.get<any>(
+      `https://localhost:7195/minimalAPI/action/${reciverId}/${action}`
+    );
+  }
+
+  InvitationComesFrom(): Observable<any> {
+    debugger
+    return this.http.get(
+      `https://localhost:7195/minimalAPI/invitationcomesfrom`
+    );
   }
 }

@@ -10,7 +10,7 @@ export class JwtinterceptorService implements HttpInterceptor {
   constructor() { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {  
-    console.log("Intercept method called from JWTInterceptor..");  
+    //console.log("Intercept method called from JWTInterceptor..");  
     // add authorization header with jwt token if available  
     let currentUser = {token:""}  
     var getCurrentUser = localStorage.getItem('currentUser');

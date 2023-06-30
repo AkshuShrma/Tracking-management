@@ -9,7 +9,6 @@ import { InvitationService } from 'src/app/services/invitation.service';
   styleUrls: ['./invitation.component.scss'],
 })
 export class InvitationComponent implements OnInit {
-
   invites: any;
   displayNameIsNot: boolean = true;
   displayName: Invitation;
@@ -26,16 +25,7 @@ export class InvitationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.invite.getAll().subscribe({
-      next:(data)=>{
-        this.invites = data;
-      console.log(this.invites)
-      },
-      error:(err)=>{
-        console.log(err)
-      }
-    })
-
+    this.DisplayUsers();
     this.results$ = this.subject.pipe(
       debounceTime(2000),
       switchMap((searchText) =>
@@ -55,7 +45,6 @@ export class InvitationComponent implements OnInit {
         console.log(data);
       },
     });
-
   }
 
   search(event: any) {
@@ -75,7 +64,7 @@ export class InvitationComponent implements OnInit {
     if (event.target.value == 'no one in db with this name or id') {
       return;
     }
-    this.displayName.Id=userId;
+    this.displayName.Id = userId;
     this.displayName.Name = event.target.value;
     this.displayNameIsNot = false;
   }
@@ -104,14 +93,29 @@ export class InvitationComponent implements OnInit {
     });
   }
 
-  // DisplayUsers(){
-  //   this.invite.getAll().subscribe({
-  //     next:(data)=>{
-  //       console.log(data)
-  //     },
-  //     error:(err)=>{
-  //       console.log(err)
-  //     }
-  //   })
-  // }
+  updateAction(reciverId: any, action: any) {
+   // debugger
+    //console.log(reciverId,"recId");
+    this.invite.action(reciverId, action).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.DisplayUsers();
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
+
+  DisplayUsers() {
+    this.invite.getAll().subscribe({
+      next: (data) => {
+        console.log(data);
+        this.invites = data;
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
 }

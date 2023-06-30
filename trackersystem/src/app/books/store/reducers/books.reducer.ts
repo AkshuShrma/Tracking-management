@@ -34,7 +34,6 @@ export const bookReducer = createReducer(
   // })
   on(updateBookAPISucess, (state, { updateBook }) => {
     let newState = [...state];
-    debugger
     let data = newState.map((datas) => {
       if (datas.bookId == updateBook.bookId) {
         return updateBook;

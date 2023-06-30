@@ -18,6 +18,8 @@ import { loginReducer } from './books/store/reducers/login.reducer';
 import { EditbooksComponent } from './components/editbooks/editbooks.component';
 import { InvitationComponent } from './components/invitation/invitation.component';
 import { JwtinterceptorService } from './jwtinterceptor.service';
+import { ConfirmationComponent } from './components/confirmation/confirmation.component';
+import { InvitationersComponent } from './components/invitationers/invitationers.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,8 @@ import { JwtinterceptorService } from './jwtinterceptor.service';
     AddbooksComponent,
     EditbooksComponent,
     InvitationComponent,
+    ConfirmationComponent,
+    InvitationersComponent,
   ],
   imports: [
     BrowserModule,

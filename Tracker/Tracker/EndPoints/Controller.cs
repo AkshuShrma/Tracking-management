@@ -71,7 +71,7 @@ namespace Tracker.EndPoints
             return app;
         }
 
-            public async static Task<IResult> Register (UserDto book, IUserRepo _context, IMapper _mapper)
+        public async static Task<IResult> Register (UserDto book, IUserRepo _context, IMapper _mapper)
             {
                 if (book == null) return Results.BadRequest();
                 var ApplicationUser = _mapper.Map<ApplicationUser>(book);
@@ -82,7 +82,7 @@ namespace Tracker.EndPoints
                 return Results.Ok("Register Successfully");
             }
 
-            public async static Task<IResult> Login (LoginDto book, IUserRepo _context)
+        public async static Task<IResult> Login (LoginDto book, IUserRepo _context)
             {
                 if (await _context.IsUnique(book.Username)) return Results.BadRequest(new { Status = 1, Data = "Please Register" });
                 var userAuthorize = await _context.AuthenticateUser(book.Username, book.Password);
@@ -110,8 +110,18 @@ namespace Tracker.EndPoints
             app.MapPost("/createinvitation", CreateInvitation).RequireAuthorization();
             app.MapGet("/status/{reciverId}/{status:int}", Status);
             app.MapGet("/action/{reciverId}/{action:int}", Action);
+            app.MapGet("invitationcomesfrom", InvitationSender);
 
             return app;
+        }
+
+        public static IResult InvitationSender( IInvitationRepo invitationRepo, IHttpContextAccessor httpContextAccessor)
+        {
+            var token = httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var userId = invitationRepo.GetIdFromToken(token);
+            if (userId == null) return Results.BadRequest();
+            var data = invitationRepo.InvitationComesFromUser(userId);
+            return Results.Ok(data);
         }
 
         public static IResult GetAll(IInvitationRepo invitationRepo, IHttpContextAccessor httpContextAccessor)
@@ -143,7 +153,7 @@ namespace Tracker.EndPoints
             return Results.Ok(new { Status = 1, Message = "Invitation Updated Successfully" });
         }
 
-        public static IResult Action( string reciverId, int action, IInvitationRepo invitationRepo, IHttpContextAccessor httpContextAccessor)
+        public static IResult Action(string reciverId, int action, IInvitationRepo invitationRepo, IHttpContextAccessor httpContextAccessor)
         {
             var token = httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var getSenderId = invitationRepo.GetIdFromToken(token);
